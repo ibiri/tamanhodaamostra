@@ -13,7 +13,11 @@ def calcular_tamanho_amostra(N, margem_erro=0.05, nivel_confianca=0.95, proporca
     z_scores = {0.90: 1.645, 0.95: 1.96, 0.99: 2.576}
     Z = z_scores.get(nivel_confianca, 1.96)
     n = (Z**2 * proporcao * (1 - proporcao)) / (margem_erro**2)
-    n_corrigido = n / (1 + (n / N))
+    # Correção para populações finitas. A fórmula correta utiliza
+    # ``n0`` dividido por ``1 + (n0 - 1)/N`` em vez de ``1 + n0/N``.
+    # A diferença é pequena para amostras grandes, mas pode impactar
+    # resultados para populações menores.
+    n_corrigido = n / (1 + (n - 1) / N)
     return math.ceil(n_corrigido)
 
 # Inputs
